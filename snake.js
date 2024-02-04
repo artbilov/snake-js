@@ -1,12 +1,26 @@
 const grid = document.querySelector('#grid')
 
 const snake = [
-  { x: 3, y: 0 },
-  { x: 4, y: 0 },
-  { x: 4, y: 1 },
+  { x: 9, y: 9 },
+  { x: 9, y: 10 },
+  { x: 10, y: 10 },
 ]
 
-let direction = 'right'
+let direction = "right"
+
+document.onkeydown = setDirection
+
+function setDirection(e) {
+  if (e.key === 'ArrowDown') {
+    if (direction !== 'up') direction = 'down'
+  } else if (e.key === 'ArrowUp') {
+    if (direction !== 'down') direction = 'up'
+  } else if (e.key === 'ArrowLeft') {
+    if (direction !== 'right') direction = 'left'
+  } else if (e.key === 'ArrowRight') {
+    if (direction !== 'left') direction = 'right'
+  }
+}
 
 const apple = [
   { x: 7, y: 1 }
@@ -14,52 +28,68 @@ const apple = [
 
 render()
 
-setTimeout(() => {
-  snake.push({ x: 5, y: 1 })
-  snake.shift()
+// setTimeout(() => {
+//   snake.push({ x: 5, y: 1 })
+//   snake.shift()
 
+//   render()
+// }, 1000)
+
+// setTimeout(() => {
+//   snake.push({ x: 6, y: 1 })
+//   snake.shift()
+
+//   render()
+// }, 2000)
+
+// setTimeout(() => {
+//   snake.push({ x: 7, y: 1 })
+//   apple.shift()
+//   render()
+// }, 3000)
+
+// setTimeout(() => {
+//   snake.push({ x: 8, y: 1 })
+//   snake.shift()
+
+//   render()
+// }, 4000)
+
+// setTimeout(() => {
+//   snake.push({ x: 9, y: 1 })
+//   snake.shift()
+
+//   render()
+// }, 5000)
+
+
+
+setInterval(() => {
+
+  let targetToPush = getTargetToPush(snake.at(-1), direction)
+
+  if (targetToPush.x == apple[0].x && targetToPush.y == apple[0].y) apple.shift()
+  else snake.shift()
+
+  snake.push(targetToPush)
   render()
 }, 1000)
 
-setTimeout(() => {
-  snake.push({ x: 6, y: 1 })
-  snake.shift()
 
-  render()
-}, 2000)
-
-setTimeout(() => {
-  snake.push({ x: 7, y: 1 })
-  apple.shift()
-  render()
-}, 3000)
-
-setTimeout(() => {
-  snake.push({ x: 8, y: 1 })
-  snake.shift()
-
-  render()
-}, 4000)
-
-setTimeout(() => {
-  snake.push({ x: 9, y: 1 })
-  snake.shift()
-
-  render()
-}, 5000)
-
-
-
-setInterval( () => {
-   
-  snake.push(targetToPush)
-  snake.shift()
-
-  render()
-}, 1000, direction)
-
-
-
+function getTargetToPush(snakeHead, dir) {
+  let result = {}
+  const gridSize = 20
+  if (dir == 'right') {
+    result = { x: (snakeHead.x + 1 === gridSize ? (snakeHead.x + 1) % gridSize : snakeHead.x + 1), y: snakeHead.y }
+  } else if (dir == 'left') {
+    result = { x: (snakeHead.x - 1 < 0 ? snakeHead.x - 1 + gridSize : snakeHead.x - 1), y: snakeHead.y }
+  } else if (dir == 'down') {
+    result = { x: snakeHead.x, y: (snakeHead.y + 1 === gridSize ? (snakeHead.y + 1) % gridSize : snakeHead.y + 1) }
+  } else if (dir == 'up') {
+    result = { x: snakeHead.x, y: snakeHead.y - 1 < 0 ? snakeHead.y - 1 + gridSize : snakeHead.y -1 }
+  }
+  return result
+}
 
 function render() {
   clearBoard()
