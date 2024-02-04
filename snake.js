@@ -1,4 +1,30 @@
-const grid = document.querySelector('#grid')
+const body = document.body
+const playground = document.createElement('section')
+const title = document.createElement('h1')
+const table = document.createElement('table')
+const grid = document.createElement('tbody')
+const gridSize = 20
+
+createPlayground(gridSize)
+
+
+function createPlayground(gridSize) {
+  title.textContent = 'Snake game'
+  grid.id = 'grid'
+  
+  body.append(playground)
+  playground.append(title, table)
+  table.append(grid)
+
+  for (let i =0; i < gridSize; i++) {
+    const tr = document.createElement('tr')
+    grid.append(tr)
+    for (let j = 0; j < gridSize; j++) {
+      const td = document.createElement('td')
+      tr.append(td)
+    }
+  }
+}
 
 const snake = [
   { x: 9, y: 9 },
@@ -78,7 +104,6 @@ setInterval(() => {
 
 function getTargetToPush(snakeHead, dir) {
   let result = {}
-  const gridSize = 20
   if (dir == 'right') {
     result = { x: (snakeHead.x + 1 === gridSize ? (snakeHead.x + 1) % gridSize : snakeHead.x + 1), y: snakeHead.y }
   } else if (dir == 'left') {
@@ -86,7 +111,7 @@ function getTargetToPush(snakeHead, dir) {
   } else if (dir == 'down') {
     result = { x: snakeHead.x, y: (snakeHead.y + 1 === gridSize ? (snakeHead.y + 1) % gridSize : snakeHead.y + 1) }
   } else if (dir == 'up') {
-    result = { x: snakeHead.x, y: snakeHead.y - 1 < 0 ? snakeHead.y - 1 + gridSize : snakeHead.y -1 }
+    result = { x: snakeHead.x, y: snakeHead.y - 1 < 0 ? snakeHead.y - 1 + gridSize : snakeHead.y - 1 }
   }
   return result
 }
