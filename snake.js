@@ -7,16 +7,15 @@ const gridSize = 20
 
 createPlayground(gridSize)
 
-
 function createPlayground(gridSize) {
   title.textContent = 'Snake game'
   grid.id = 'grid'
-  
+
   body.append(playground)
   playground.append(title, table)
   table.append(grid)
 
-  for (let i =0; i < gridSize; i++) {
+  for (let i = 0; i < gridSize; i++) {
     const tr = document.createElement('tr')
     grid.append(tr)
     for (let j = 0; j < gridSize; j++) {
@@ -89,18 +88,23 @@ render()
 // }, 5000)
 
 
+let intervalId = setInterval(runSnake, 3000 / snake.length)
 
-setInterval(() => {
-
+function runSnake() {
   let targetToPush = getTargetToPush(snake.at(-1), direction)
 
   if (targetToPush.x == apple[0].x && targetToPush.y == apple[0].y) apple.shift()
   else snake.shift()
 
-  snake.push(targetToPush)
-  render()
-}, 1000)
-
+  if (snake.some(snakeCell => snakeCell.x === targetToPush.x && snakeCell.y === targetToPush.y)) {
+    clearInterval(intervalId)
+    console.log('game over')
+    // return
+  } else {
+    snake.push(targetToPush)
+    render()
+  }
+}
 
 function getTargetToPush(snakeHead, dir) {
   let result = {}
@@ -115,6 +119,7 @@ function getTargetToPush(snakeHead, dir) {
   }
   return result
 }
+
 
 function render() {
   clearBoard()
