@@ -1,18 +1,51 @@
 const body = document.body
 const playground = document.createElement('section')
 const title = document.createElement('h1')
+const score = document.createElement('h2')
 const table = document.createElement('table')
 const grid = document.createElement('tbody')
-const gridSize = 20
+const gridSize = 30
+
+const snake = [
+  { x: 9, y: 9 },
+  { x: 9, y: 10 },
+  { x: 10, y: 10 },
+]
+
+const apple = [
+  { x: 7, y: 1 }
+]
+
+let dir = "right"
 
 createPlayground(gridSize)
 
+render()
+
+document.onkeydown = setDirection
+
+let intervalId = setInterval(runSnake, 3000 / snake.length)
+
+function setDirection(e) {
+  if (e.key === 'ArrowDown' && dir !== 'up') dir = 'down'
+  else if (e.key === 'ArrowUp' && dir !== 'down') dir = 'up'
+  else if (e.key === 'ArrowLeft' && dir !== 'right') dir = 'left'
+  else if (e.key === 'ArrowRight' && dir !== 'left') dir = 'right'
+  else return
+
+  clearInterval(intervalId)
+  intervalId = setInterval(runSnake, 3000 / snake.length)
+  runSnake()
+}
+
+
 function createPlayground(gridSize) {
   title.textContent = 'Snake game'
+  score.textContent = 'Length of Snake is: ' + snake.length
   grid.id = 'grid'
 
   body.append(playground)
-  playground.append(title, table)
+  playground.append(title, score, table)
   table.append(grid)
 
   for (let i = 0; i < gridSize; i++) {
@@ -25,77 +58,17 @@ function createPlayground(gridSize) {
   }
 }
 
-const snake = [
-  { x: 9, y: 9 },
-  { x: 9, y: 10 },
-  { x: 10, y: 10 },
-]
-
-let direction = "right"
-
-document.onkeydown = setDirection
-
-function setDirection(e) {
-  if (e.key === 'ArrowDown') {
-    if (direction !== 'up') direction = 'down'
-  } else if (e.key === 'ArrowUp') {
-    if (direction !== 'down') direction = 'up'
-  } else if (e.key === 'ArrowLeft') {
-    if (direction !== 'right') direction = 'left'
-  } else if (e.key === 'ArrowRight') {
-    if (direction !== 'left') direction = 'right'
-  }
-}
-
-const apple = [
-  { x: 7, y: 1 }
-]
-
-render()
-
-// setTimeout(() => {
-//   snake.push({ x: 5, y: 1 })
-//   snake.shift()
-
-//   render()
-// }, 1000)
-
-// setTimeout(() => {
-//   snake.push({ x: 6, y: 1 })
-//   snake.shift()
-
-//   render()
-// }, 2000)
-
-// setTimeout(() => {
-//   snake.push({ x: 7, y: 1 })
-//   apple.shift()
-//   render()
-// }, 3000)
-
-// setTimeout(() => {
-//   snake.push({ x: 8, y: 1 })
-//   snake.shift()
-
-//   render()
-// }, 4000)
-
-// setTimeout(() => {
-//   snake.push({ x: 9, y: 1 })
-//   snake.shift()
-
-//   render()
-// }, 5000)
-
-
-let intervalId = setInterval(runSnake, 3000 / snake.length)
-
 function runSnake() {
-  let targetToPush = getTargetToPush(snake.at(-1), direction)
+  let targetToPush = getTargetToPush()
 
-  if (targetToPush.x == apple[0].x && targetToPush.y == apple[0].y) apple.shift()
-  else snake.shift()
-
+  if (targetToPush.x == apple[0].x && targetToPush.y == apple[0].y) {
+    apple.shift()
+    addApple()
+    clearInterval(intervalId)
+    intervalId = setInterval(runSnake, 3000 / snake.length)
+  } else {
+    snake.shift()
+  }
   if (snake.some(snakeCell => snakeCell.x === targetToPush.x && snakeCell.y === targetToPush.y)) {
     clearInterval(intervalId)
     console.log('game over')
@@ -106,8 +79,10 @@ function runSnake() {
   }
 }
 
-function getTargetToPush(snakeHead, dir) {
+function getTargetToPush() {
+  const snakeHead = snake.at(-1)
   let result = {}
+
   if (dir == 'right') {
     result = { x: (snakeHead.x + 1 === gridSize ? (snakeHead.x + 1) % gridSize : snakeHead.x + 1), y: snakeHead.y }
   } else if (dir == 'left') {
@@ -120,12 +95,12 @@ function getTargetToPush(snakeHead, dir) {
   return result
 }
 
-
 function render() {
   clearBoard()
-  addApple()
   renderApple()
   renderSnake()
+
+  score.textContent = score.textContent.replace(/\d*$/, snake.length)
 }
 
 function clearBoard() {
@@ -136,7 +111,6 @@ function clearBoard() {
 }
 
 function addApple() {
-  if (apple.length > 0) return
   let x = Math.floor(Math.random() * 20)
   let y = Math.floor(Math.random() * 20)
 
