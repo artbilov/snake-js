@@ -1,8 +1,8 @@
 td {
-  width: 30px;
-  height: 30px;
+  width: var(--size);
+  height: var(--size);
   border: 1px solid gray;
-
+  box-sizing: border-box;
 }
 
 .apple {

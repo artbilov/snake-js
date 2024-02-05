@@ -4,7 +4,7 @@ const title = document.createElement('h1')
 const score = document.createElement('h2')
 const table = document.createElement('table')
 const grid = document.createElement('tbody')
-const gridSize = 30
+const gridSize = 20
 
 const snake = [
   { x: 9, y: 9 },
@@ -17,6 +17,8 @@ const apple = [
 ]
 
 let dir = "right"
+
+setSize()
 
 createPlayground(gridSize)
 
@@ -38,6 +40,14 @@ function setDirection(e) {
   runSnake()
 }
 
+function setSize() {
+  const width = innerWidth - 16 - 3 * (gridSize - 1)
+  const height = innerHeight - 8 - table.offsetTop - 3 * (gridSize - 1) - 100
+  const space = Math.min(width, height)
+  const size = space / gridSize
+
+  table.style.setProperty('--size', size + 'px')
+}
 
 function createPlayground(gridSize) {
   title.textContent = 'Snake game'
